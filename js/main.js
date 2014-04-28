@@ -18,13 +18,14 @@ App.Model = (function() {
     return function( modelName, watchesOn ) {
         var elem        = document.querySelector( '[data-model-view="'+ modelName +'"]' );
         var template    = (modelTemplates[ modelName ] = modelTemplates[ modelName ] || elem.innerHTML);
+        var reg         = /\{\{(.*?)\}\}/g;
         var currentHtml = "";
         var newHtml     = template;
         var variable    = "";
         var self        = this;
 		var key         = "";
 
-		watchesOn       = watchesOn || [];
+		watchesOn       = watchesOn || this.__.watchesOn;
         this.viewElem   = elem;
 
 
@@ -38,16 +39,19 @@ App.Model = (function() {
 
 	    if( watchesOn > 0 ){
 		    for( key in watchesOn ) {
-			    addPropWatcher( this, key, updatePropInView );
+                if( key !== "__" ){
+                    addPropWatcher( this, key, updatePropInView );
+                }
 		    }
 	    } else {
 	        for( key in this ) {
-	            addPropWatcher( this, key, updatePropInView );
+                if( key !== "__" ){
+	                addPropWatcher( this, key, updatePropInView );
+                }
 	        }
 	    }
 
         function updatePropsInView( prop, newVal ) {
-            var reg = /\{\{(.*?)\}\}/g;
 	        var re = "";
             while( re = reg.exec( template ) ){
                 variable = trim( re[1] );
@@ -71,10 +75,13 @@ App.Model = (function() {
 
 }());
 App.Model.prototype = {
-	watchesOn: [],
+    // options for the model
+    __: {
+        watchesOn: [],
+        viewElem: {}
+    },
+
     options: 12,
-    viewElem: {},
-    view: "",
     bla: 432
 };
 
