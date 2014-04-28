@@ -13,57 +13,83 @@ function trim ( str ) {
     return str.replace(/^\s+|\s+$/g, '');
 }
 
-App.model = (function() {
+App.Model = (function() {
+    var modelTemplates = {};
+    return function( modelName, watchesOn ) {
+        var elem        = document.querySelector( '[data-model-view="'+ modelName +'"]' );
+        var template    = (modelTemplates[ modelName ] = modelTemplates[ modelName ] || elem.innerHTML);
+        var currentHtml = "";
+        var newHtml     = template;
+        var variable    = "";
+        var self        = this;
+		var key         = "";
 
-    return function( modelName ) {
-        var elem = document.querySelector( '[data-model-view="'+ modelName +'"]' );
-        var html = elem.innerHTML;
-        var currentHtml = html;
+		watchesOn       = watchesOn || [];
+        this.viewElem   = elem;
 
-        function updateView( fn ) {
-            for( var key in this ) {
-                if( fn ) {
-                    fn( key );
+
+        function updatePropInView( prop, oldVal, newVal ) {
+	        console.log("updatePropInView")
+            if( oldVal !== newVal ) {
+                updatePropsInView( prop, newVal );
+            }
+            return newVal;
+        }
+
+	    if( watchesOn > 0 ){
+		    for( key in watchesOn ) {
+			    addPropWatcher( this, key, updatePropInView );
+		    }
+	    } else {
+	        for( key in this ) {
+	            addPropWatcher( this, key, updatePropInView );
+	        }
+	    }
+
+        function updatePropsInView( prop, newVal ) {
+            var reg = /\{\{(.*?)\}\}/g;
+	        var re = "";
+            while( re = reg.exec( template ) ){
+                variable = trim( re[1] );
+                if( typeof self[ variable ] !== "undefined" ) {
+                    if( variable === prop ){
+                        newHtml = newHtml.replace( re[0], newVal );
+                    } else {
+                        newHtml = newHtml.replace( re[0], self[ variable ] );
+                    }
                 }
-                var newHtml = html.replace( "{{ "+ key +" }}", this[key] );
             }
             if( newHtml !== currentHtml ) {
                 elem.innerHTML = newHtml;
             }
             currentHtml = newHtml;
+            newHtml = template;
         }
+        updatePropsInView();
 
-        function handler( prop, oldVal, newVal ) {
-            updateView();
-        }
-
-        this.viewElem = elem;
-        this.view = '';
-        this.options = 12;
-        this.bla = 432;
-
-        updateView( function( key ) {
-            addPropWatcher( this, key, handler )
-        } );
     }
+
 }());
-App.model.prototype = {
-    options: 0,
+App.Model.prototype = {
+	watchesOn: [],
+    options: 12,
+    viewElem: {},
     view: "",
-    bla: 0
+    bla: 432
 };
 
-var onPropChange = function () {
 
-    console.log( "model.options hat sch geändert" )
-    console.log( arguments )
 
+var blub = new App.Model( "testModel" );
+var b = document.querySelector( '[data-model-view]' )
+b.style.display = "block"
+
+
+
+function startTest() {
+    console.time('updatePropInView')
+    for( var i = 0; i<100000; i++){
+        blub.options = i;
+    }
+    console.timeEnd('updatePropInView')
 }
-//App.model.watch('options', handler);
-
-var blub = new App.model( "testModel" );
-
-var moep = {
-    options: 0
-}
-addPropWatcher( moep, 'options', onPropChange );
