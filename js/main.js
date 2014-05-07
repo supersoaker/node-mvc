@@ -15,19 +15,43 @@ function trim ( str ) {
 
 App.Model = (function() {
     var modelTemplates = {};
-    return function( modelName, watchesOn ) {
+    return function( modelName, prototype ) {
+	    prototype = typeof prototype !== "undefined" ? prototype :
+	    	{};
         var elem        = document.querySelector( '[data-model-view="'+ modelName +'"]' );
         var template    = (modelTemplates[ modelName ] = modelTemplates[ modelName ] || elem.innerHTML);
-        var reg         = /\{\{(.*?)\}\}/g;
         var currentHtml = "";
         var newHtml     = template;
         var variable    = "";
-        var self        = this;
+        var model       = prototype;
 		var key         = "";
 
-		watchesOn       = watchesOn || this.__.watchesOn;
-        this.viewElem   = elem;
+		var watchesOn       = prototype.watchesOn || this.watchesOn;
+	    var privates    = {
+	        viewElem    : elem,
+		    viewTemplate: template,
+		    watchers    : watchesOn
+	    };
 
+//        this.viewElem   = elem;
+
+	    /**
+	     * Get method for private properties
+	     * @param prop
+	     * @param $default
+	     * @returns {*}
+	     */
+	    model.get        = function( prop, $default ) {
+		    if( typeof model[ prop ] !== "undefined" )
+				return model[ prop ];
+
+			if( typeof privates[ prop ] !== "undefined" )
+				return privates[ prop ];
+
+		    $default = typeof $default !== "undefined" ? $default :
+		    	false;
+		    return $default;
+	    };
 
         function updatePropInView( prop, oldVal, newVal ) {
 	        console.log("updatePropInView")
@@ -39,27 +63,24 @@ App.Model = (function() {
 
 	    if( watchesOn > 0 ){
 		    for( key in watchesOn ) {
-                if( key !== "__" ){
-                    addPropWatcher( this, key, updatePropInView );
-                }
+			    addPropWatcher( model, key, updatePropInView );
 		    }
 	    } else {
 	        for( key in this ) {
-                if( key !== "__" ){
-	                addPropWatcher( this, key, updatePropInView );
-                }
+	            addPropWatcher( model, key, updatePropInView );
 	        }
 	    }
 
         function updatePropsInView( prop, newVal ) {
+	        var reg = /\{\{(.*?)\}\}/g;
 	        var re = "";
             while( re = reg.exec( template ) ){
                 variable = trim( re[1] );
-                if( typeof self[ variable ] !== "undefined" ) {
+                if( typeof model[ variable ] !== "undefined" ) {
                     if( variable === prop ){
                         newHtml = newHtml.replace( re[0], newVal );
                     } else {
-                        newHtml = newHtml.replace( re[0], self[ variable ] );
+                        newHtml = newHtml.replace( re[0], model[ variable ] );
                     }
                 }
             }
@@ -71,23 +92,33 @@ App.Model = (function() {
         }
         updatePropsInView();
 
+	    return model;
     }
 
 }());
-App.Model.prototype = {
-    // options for the model
-    __: {
-        watchesOn: [],
-        viewElem: {}
-    },
 
-    options: 12,
-    bla: 432
+/**
+ * the prototype of all models
+ * @type {{_: {}, watchesOn: Array, options: number, view: string, bla: number}}
+ */
+App.Model.prototype = {
+	_ : {},
+	watchesOn: [],
+	get: function() {}
 };
 
+// todo: App.addModel
+//App.addModel
 
-
-var blub = new App.Model( "testModel" );
+var blub  = new App.Model( "testModel", {
+	watchesOn: [],
+	options: 12,
+	view: "",
+	bla: 432
+} );
+//var blub1 = new App.Model( "testModel" );
+//var blub2 = new App.Model( "testModel" );
+blub.options = 99
 var b = document.querySelector( '[data-model-view]' )
 b.style.display = "block"
 

@@ -34,7 +34,7 @@ function addPropWatcher( obj, prop, handler ) {
             return newval;
         }
         , setter = function (val) {
-            oldval = newval;
+		    oldval = newval;
             return newval = handler.call(obj, prop, oldval, val);
         }
         ;
