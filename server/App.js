@@ -83,16 +83,38 @@ var App = {};
 		},
 
 		saveModel : function( model, cb ) {
-			var tableName =  model.get('_modelName')
-			var dataRow = new Database.table[ tableName ]( model );
-			dataRow.save( cb );
-		}
+            var tableName =  model.get('_modelName')
+            var dataRow = new Database.table[ tableName ]( model );
+			dataRow.save( function() {
+                emitter.emit( 'Database.new-'+ tableName, model );
+                cb();
+            } );
+		},
+
+        saveModels: function( modelArray, cb ) {
+            var i               = 0,
+                len             = modelArray.length,
+                afterSaveArray  = [];
+            while ( i < len ) {
+                this.saveModel( modelArray[i], function( err, savedModel ) {
+                    if( err ) { console.error.bind(console, 'saving error:'); }
+                    afterSaveArray.push( savedModel );
+                    if( afterSaveArray.length === len ) {
+                        cb( afterSaveArray );
+                    }
+                } );
+                i++;
+            }
+        }
+
+
 	};
 })();
 function onServerReady() {
+
 	// each model has its own table
-	var Article = App.addNewModel( 'articles', {
-		_id             : Number,
+	var Article = App.addNewModel( 'article', {
+        id              : Number,
 		itemId			: Number,
 		galleryUrl 		: String,
 		title			: String,
@@ -110,21 +132,37 @@ function onServerReady() {
 			producer			: String,
 			color				: Array
 		}
-	} )
+	} );
 	var art1 = new Article({
-		_id             : 123,
+		id             : 1,
+		itemId			: 1256666,
+		galleryUrl 		: "http://ysdfsdfsdf.com",
+		title			: "das",
+		itemUrl         : "http://sdfsd.de"
+	});	var art2 = new Article({
+		id             : 2,
+		itemId			: 1256666,
+		galleryUrl 		: "http://ysdfsdfsdf.com",
+		title			: "das",
+		itemUrl         : "http://sdfsd.de"
+	});	var art3 = new Article({
+		id             : 3,
 		itemId			: 1256666,
 		galleryUrl 		: "http://ysdfsdfsdf.com",
 		title			: "das",
 		itemUrl         : "http://sdfsd.de"
 	});
-	
+	var arr = [art1, art2, art3]
+    App.saveModels( arr, function( modelSavedArray ) {
+        console.log( modelSavedArray )
+    } )
 //	console.log( art1 )
-	App.saveModel( art1, function( err, obj ) {
-//		App.data
-		App.getModelTable("articlesss").find({}, function( err, obj ) {
-			console.log(arguments)
-		});
-	} )
+//	App.saveModel( art1, function( err, obj ) {
+//
+//		App.getModelTable("article").find({}, function( err, obj ) {
+//			console.log(obj)
+//		});
+//
+//	} );
 
 }
