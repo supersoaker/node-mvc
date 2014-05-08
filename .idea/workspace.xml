@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="31b60f66-ef38-46fb-a1d3-6b4109cd6df5" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/App.js" />
+    <list default="true" id="31b60f66-ef38-46fb-a1d3-6b4109cd6df5" name="Default" comment="added server models">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/App/Model.js" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
@@ -45,7 +44,7 @@
           <file leaf-file-name="App.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/server/App.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="87" column="31" selection-start="2051" selection-end="2051" vertical-scroll-proportion="0.0" vertical-offset="1070" max-vertical-offset="2312">
+                <state line="125" column="27" selection-start="3146" selection-end="3146" vertical-scroll-proportion="0.0" vertical-offset="1716" max-vertical-offset="2958">
                   <folding />
                 </state>
               </provider>
@@ -54,7 +53,7 @@
           <file leaf-file-name=".gitignore" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/.gitignore">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="2" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.057142857" vertical-offset="0" max-vertical-offset="595">
+                <state line="2" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.063197024" vertical-offset="0" max-vertical-offset="538">
                   <folding />
                 </state>
               </provider>
@@ -76,7 +75,7 @@
           <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/js/main.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="46" column="0" selection-start="1527" selection-end="1527" vertical-scroll-proportion="0.74285716" vertical-offset="255" max-vertical-offset="2261">
+                <state line="46" column="0" selection-start="1527" selection-end="1527" vertical-scroll-proportion="0.82156134" vertical-offset="255" max-vertical-offset="2261">
                   <folding>
                     <element signature="n#!!doc" expanded="true" />
                     <element signature="e#1279#1398#0" expanded="false" />
@@ -193,8 +192,7 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="UPDATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/.gitignore</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/main.js</PATH>
+            <PATH vcs="Git" revision="">$PROJECT_DIR$/server/App.js</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Created" />
@@ -202,30 +200,6 @@
             <option name="mySupportsDeletion" value="false" />
             <option name="myCanBeAbsent" value="false" />
             <option name="myId" value="CREATED" />
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/LICENSE-DOT.txt</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/README.md</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/compileBench.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/genspeed.html</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/index.html</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/jslitmus.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/templatesBench.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/templating/doT.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/benchmarks/templating/doU.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/bin/dot-packer</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/doT.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/doT.min.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/doU.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/advancedsnippet.txt</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/browsersample.html</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/customdoT.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/snippet.txt</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/views/multidef.def.jst</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/views/one.def</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/views/two.dot.jst</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/examples/withdoT.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/index.js</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/package.json</PATH>
-            <PATH vcs="Git" revision="">$PROJECT_DIR$/js/vendor/dot.js/test/testdoT.js</PATH>
           </FILE-GROUP>
           <FILE-GROUP>
             <option name="myUpdateName" value="Deleted" />
@@ -362,8 +336,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1912" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="1912" y="-8" width="1936" height="1056" extended-state="7" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -375,7 +349,7 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32937366" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39092872" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -397,6 +371,8 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
+    <MESSAGE value="added server models" />
+    <option name="LAST_COMMIT_MESSAGE" value="added server models" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -449,7 +425,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="0" selection-start="1527" selection-end="1527" vertical-scroll-proportion="0.74285716" vertical-offset="255" max-vertical-offset="2261">
+        <state line="46" column="0" selection-start="1527" selection-end="1527" vertical-scroll-proportion="0.82156134" vertical-offset="255" max-vertical-offset="2261">
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#1279#1398#0" expanded="false" />
@@ -459,14 +435,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server/App.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="31" selection-start="2051" selection-end="2051" vertical-scroll-proportion="0.0" vertical-offset="1070" max-vertical-offset="2312">
+        <state line="125" column="27" selection-start="3146" selection-end="3146" vertical-scroll-proportion="0.0" vertical-offset="1716" max-vertical-offset="2958">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.057142857" vertical-offset="0" max-vertical-offset="595">
+        <state line="2" column="6" selection-start="143" selection-end="143" vertical-scroll-proportion="0.063197024" vertical-offset="0" max-vertical-offset="538">
           <folding />
         </state>
       </provider>
