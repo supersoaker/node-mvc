@@ -37,6 +37,12 @@ var App = {};
 		// object with all tables
 		table: {}
 	};
+
+    function capitalizeString(string) {
+        console.log( string )
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
 	App = {
 		addNewModel : function( modelName, construct ) {
 			// modelName == tableName
@@ -51,24 +57,64 @@ var App = {};
 					modelName : modelName
 				};
 
-				/**
-				 * Get method for private properties
+
+
+                /**
+                 * Set method for properties
+                 * @param prop
+                 * @returns {*}
+                 */
+                model.set = function( prop, value ) {
+                    var method;
+
+                    method = model[ "set"+ model[ prop ] ];
+                    if( typeof model[ method ] === "function" ) {
+                        model[ method ]( value );
+                        return model;
+                    }
+                    method = model[ "set"+ capitalizeString( prop ) ];
+                    if( typeof model[ method ] === "function" ) {
+                        model[ method ]( value );
+                        return model;
+                    }
+
+                    method = privates[ prop.substring(1) ];
+                    if( typeof method !== "undefined" ) {
+                        method = value;
+                        return model;
+                    }
+
+                };
+
+
+                /**
+				 * Get method for properties
 				 * @param prop
 				 * @param $default
 				 * @returns {*}
 				 */
 				model.get = function( prop, $default ) {
-					if( typeof model[ prop ] !== "undefined" )
-						return model[ prop ];
+                    var value;
 
-					prop.slice();
+                    // check if the model contains the property
+                    value = model[ prop ];
+                    if( typeof value !== "undefined" )
+						return value;
+                    // check if a getter method exists
+                    value = model[ "get"+ model[ prop ] ];
+                    if( typeof value === "function" )
+						return value();
+                    // check if a camel-case getter method exists
+                    value = model[ "get"+ capitalizeString( prop ) ];
+                    if( typeof value === "function" )
+                        return value();
+                    // check if the private array contains the prop
+                    value = privates[ prop.substring(1) ];
+					if( typeof value !== "undefined" )
+						return value;
 
-					if( typeof privates[ prop.substring(1) ] !== "undefined" )
-						return privates[ prop.substring(1) ];
-
-					$default = typeof $default !== "undefined" ? $default :
-						false;
-					return $default;
+                    // return the default value
+					return $default || false;
 				};
 				return model;
 			};
@@ -83,11 +129,10 @@ var App = {};
 		},
 
 		saveModel : function( model, cb ) {
-            var tableName =  model.get('_modelName')
-            var dataRow = new Database.table[ tableName ]( model );
-			dataRow.save( function() {
-                emitter.emit( 'Database.new-'+ tableName, model );
-                cb();
+            var tableName =  model.get('_modelName');
+            new Database.table[ tableName ]( model ).save( function( err, savedModel ) {
+//                emitter.emit( 'Database.new-'+ tableName, model );
+                cb( err, savedModel );
             } );
 		},
 
@@ -153,15 +198,17 @@ function onServerReady() {
 		itemUrl         : "http://sdfsd.de"
 	});
 	var arr = [art1, art2, art3]
-    App.saveModels( arr, function( modelSavedArray ) {
-        console.log( modelSavedArray )
-    } )
-//	console.log( art1 )
+    var b = App.getModelTable("article")
+//    console.log(b)
+//        .remove({}, function(){ console.log(arguments)});
+//    App.saveModels( arr, function( modelSavedArray ) {
+//        console.log( modelSavedArray )
+//    } )
 //	App.saveModel( art1, function( err, obj ) {
-//
 //		App.getModelTable("article").find({}, function( err, obj ) {
 //			console.log(obj)
 //		});
+//
 //
 //	} );
 
