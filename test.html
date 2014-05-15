@@ -1,0 +1,63 @@
+<stlye>
+    var[data-innerHtml] {
+        font-style: normal;
+    }
+</stlye>
+<script>
+    var dataAttributes = [
+        'innerHTML',
+        'hidden',
+        'value'
+    ];
+
+    // todo: attributes elemente raussuchen, und die werte der html elemente ändern, die angegeben sind
+    var i = dataAttributes.length;
+    while(i--){
+        document.getElementsByTagName( 'data-'+ dataAttributes[i] );
+    }
+//    var
+</script>
+<div class="alert alert-success">
+    <!--<strong data-showVars="[userModel.fullname, userModel.messagesCounted]">-->
+    <strong data-dependencies="[userModel.fullname, userModel.messagesCounted]">
+        Willkommen {%1}, du hast {%2} Nachrichten
+    </strong>
+    <br />
+    <input data-value="" type="text"/>
+    Letzter Login: <var data-innerHTML="userModel.lastLogin"></var>
+</div>
+
+<div class="panel panel-danger">
+    <div class="panel-heading"><h4><strong>Tickets</strong></h4></div>
+    <div class="panel-body">
+
+        <div data-hidden="userTickets.length == 1">
+            Sie haben <a href="tickets/viewtickets/my">1 Ticket</a>, das noch bearbeitet werden muss.
+        </div>
+        <div data-display-if="userTickets.length > 2" data-showVars="[userTickets.length]">
+            Sie haben <a href="tickets/viewtickets/my">{$1} Tickets</a>, das noch bearbeitet werden muss.
+        </div>
+        <div data-display-if="userTickets.length ==  0">
+            Sie haben keine zugewiesenen Tickets.
+        </div>
+
+
+        <a href="tickets/viewtickets/open">Hier</a> finden sie weitere offene Tickets.
+    </div>
+</div>
+
+<div class="panel panel-info">
+    <div class="panel-heading"><h4><strong>Meetings</strong></h4></div>
+    <div class="panel-body">
+        Seit Ihrem letzten Login fanden keine neuen Meetings statt.
+        <br />
+        <a href="meetings/">Hier</a> finden Sie alle Meetings.
+    </div>
+</div>
+
+<div class="panel panel-warning">
+    <div class="panel-heading"><h4><strong>Konversationen</strong></h4></div>
+    <div class="panel-body">
+        Sie haben <a href="/Management/conversation"><span class="label label-warning">3</span>ungelesene Konversationen.</a>
+    </div>
+</div>
