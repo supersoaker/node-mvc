@@ -39,32 +39,74 @@ var App = {};
 	};
 
     function capitalizeString(string) {
-        console.log( string )
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
 
 	App = {
 		addNewModel : function( modelName, construct ) {
-			// modelName == tableName
 
+			var constructInstance = {};
+			try {
+				constructInstance = new construct();
+			}
+			catch (e) {
+				// construct is already an instance
+				constructInstance = construct;
+			}
+
+			var schema      = {},
+				schemaTypes = [ String, Array, Object, Number, Boolean ],
+				propType;
+			// adapt the construct to the schema model of mongoose
+			for (var o in constructInstance) {
+				// check if the property is already a native variable
+				if( schemaTypes.indexOf( constructInstance[o] ) === -1 ){
+
+					continue;
+				}
+				propType = constructInstance[o].constructor;
+				if( schemaTypes.indexOf( propType ) === -1 ){
+					schema[o] = {};
+				} else {
+					if( propType === String ){
+						// check if property is special schema type
+						if( propType === "Buffer" ){
+							constructInstance[o].constructor = Buffer;
+						} else
+						if( propType === "Mixed" ){
+							constructInstance[o].constructor = mongoose.Schema.Types.Mixed;
+						} else
+						if( propType === "Date" ) {
+							constructInstance[o].constructor = mongoose.Schema.Types.Date;
+						} else
+						if( propType === "ObjectId" ) {
+							constructInstance[o].constructor = mongoose.Schema.Types.ObjectId;
+						}
+						continue;
+					}
+					schema[o] = constructInstance[o].constructor;
+				}
+			}
+
+			// save the model table into a local variable
 			Database.table[ modelName ] =
-				mongoose.model( modelName, mongoose.Schema( construct ) );
+				mongoose.model( modelName, mongoose.Schema( schema ) );
 
 			// returns the constructor of the model class
-			return function( model ) {
-
+			var modelClass = function( model ) {
+				model = typeof model !== "undefined" ? model :
+					{};
+				
 				var privates    = {
 					modelName : modelName
 				};
-
-
 
                 /**
                  * Set method for properties
                  * @param prop
                  * @returns {*}
                  */
-                model.set = function( prop, value ) {
+                this.set = function( prop, value ) {
                     var method;
 
                     method = model[ "set"+ model[ prop ] ];
@@ -86,14 +128,13 @@ var App = {};
 
                 };
 
-
                 /**
 				 * Get method for properties
 				 * @param prop
 				 * @param $default
 				 * @returns {*}
 				 */
-				model.get = function( prop, $default ) {
+                this.get = function( prop, $default ) {
                     var value;
 
                     // check if the model contains the property
@@ -116,8 +157,13 @@ var App = {};
                     // return the default value
 					return $default || false;
 				};
-				return model;
 			};
+			console.log( construct )
+			modelClass.prototype = construct;
+			return modelClass;
+		},
+		getNewModelObject: function(){
+
 		},
 
 		getModelTable: function( tableName ) {
@@ -132,8 +178,9 @@ var App = {};
             var tableName =  model.get('_modelName');
             new Database.table[ tableName ]( model ).save( function( err, savedModel ) {
 //                emitter.emit( 'Database.new-'+ tableName, model );
+//	            this.
                 cb( err, savedModel );
-            } );
+            }.bind(this) );
 		},
 
         saveModels: function( modelArray, cb ) {
@@ -159,24 +206,11 @@ function onServerReady() {
 
 	// each model has its own table
 	var Article = App.addNewModel( 'article', {
-        id              : Number,
-		itemId			: Number,
-		galleryUrl 		: String,
-		title			: String,
-		itemUrl         : String,
-		description     : String,
-		listingInfo 	: {
-			endTimeSec 			: Number
-		},
-		sellingStatus 	: {
-			currentPrice		: Number
-		},
-		specific		: {
-			primaryCategory		: Array,
-			secondaryCategory	: Array,
-			producer			: String,
-			color				: Array
-		}
+        id              : 1,
+		itemId			: 1,
+		galleryUrl 		: "http://google.de",
+		title			: "Default",
+		itemUrl 		: "http://google.de"
 	} );
 	var art1 = new Article({
 		id             : 1,
@@ -192,13 +226,14 @@ function onServerReady() {
 		itemUrl         : "http://sdfsd.de"
 	});	var art3 = new Article({
 		id             : 3,
-		itemId			: 1256666,
-		galleryUrl 		: "http://ysdfsdfsdf.com",
-		title			: "das",
+//		itemId			: 1256666,
+//		galleryUrl 		: "http://ysdfsdfsdf.com",
+//		title			: "das",
 		itemUrl         : "http://sdfsd.de"
 	});
 	var arr = [art1, art2, art3]
     var b = App.getModelTable("article")
+	console.log( art3 )
 //    console.log(b)
 //        .remove({}, function(){ console.log(arguments)});
 //    App.saveModels( arr, function( modelSavedArray ) {
