@@ -12,6 +12,14 @@ var io          = require('socket.io').listen(8081),
 		database : 'node-mvc'
 	}
 
+    Controllers = []
+
+;
+require("fs").readdirSync("./App/Controller").forEach(function(file) {
+    Controllers.push( require("./App/Controller/" + file) );
+});
+
+console.log( Controllers[0] )
 function initServer() {
 
 	emitter.on('db-connected', onServerReady);
@@ -43,13 +51,14 @@ var App = {};
     }
 
 	App = {
+
+
 		addNewModel : function( modelName, construct ) {
 
 			var constructInstance = {};
 			try {
 				constructInstance = new construct();
-			}
-			catch (e) {
+			} catch (e) {
 				// construct is already an instance
 				constructInstance = construct;
 			}
@@ -57,7 +66,7 @@ var App = {};
 			var schema      = {},
 				schemaTypes = [ String, Array, Object, Number, Boolean ],
 				propType;
-			// adapt the construct to the schema model of mongoose
+			// adapt the construct to the schema model of mongoose (only root properties)
 			for (var o in constructInstance) {
 				// check if the property is already a native variable
 				if( schemaTypes.indexOf( constructInstance[o] ) === -1 ){
@@ -92,14 +101,17 @@ var App = {};
 			Database.table[ modelName ] =
 				mongoose.model( modelName, mongoose.Schema( schema ) );
 
-			// returns the constructor of the model class
-			var modelClass = function( model ) {
+			// return the constructor of the model class
+			function ModelClass ( model ) {
 				model = typeof model !== "undefined" ? model :
 					{};
 				
 				var privates    = {
 					modelName : modelName
 				};
+                for (var key in model) {
+                    this[ key ] = model[ key ];
+                }
 
                 /**
                  * Set method for properties
@@ -155,15 +167,17 @@ var App = {};
 						return value;
 
                     // return the default value
-					return $default || false;
+                    if( typeof $default !== "undefined" ) {
+                        return $default;
+                    } else {
+                        console.error( "Can't get value '%s' and $default is not defined", prop );
+					    return false;
+                    }
 				};
-			};
-			console.log( construct )
-			modelClass.prototype = construct;
-			return modelClass;
-		},
-		getNewModelObject: function(){
 
+            }
+            ModelClass.prototype = construct;
+            return ModelClass;
 		},
 
 		getModelTable: function( tableName ) {
@@ -202,7 +216,10 @@ var App = {};
 
 	};
 })();
+
 function onServerReady() {
+
+    var ArticleCollection = '';
 
 	// each model has its own table
 	var Article = App.addNewModel( 'article', {
@@ -212,28 +229,20 @@ function onServerReady() {
 		title			: "Default",
 		itemUrl 		: "http://google.de"
 	} );
-	var art1 = new Article({
-		id             : 1,
-		itemId			: 1256666,
-		galleryUrl 		: "http://ysdfsdfsdf.com",
-		title			: "das",
-		itemUrl         : "http://sdfsd.de"
-	});	var art2 = new Article({
-		id             : 2,
-		itemId			: 1256666,
-		galleryUrl 		: "http://ysdfsdfsdf.com",
-		title			: "das",
-		itemUrl         : "http://sdfsd.de"
-	});	var art3 = new Article({
+
+
+    var art3 = new Article( {
 		id             : 3,
 //		itemId			: 1256666,
 //		galleryUrl 		: "http://ysdfsdfsdf.com",
 //		title			: "das",
 		itemUrl         : "http://sdfsd.de"
-	});
-	var arr = [art1, art2, art3]
-    var b = App.getModelTable("article")
-	console.log( art3 )
+	} );
+
+
+//	var arr = [art1, art2, art3]
+//    var b = App.getModelTable("article")
+	console.log( art3.get('asggsdgs') )
 //    console.log(b)
 //        .remove({}, function(){ console.log(arguments)});
 //    App.saveModels( arr, function( modelSavedArray ) {

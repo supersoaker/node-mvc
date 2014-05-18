@@ -43,5 +43,21 @@
             io.connect( 'http://localhost:8081' )
 
         </script>
+        <script>
+            var Sever = {};
+
+            Server.callInto = function( $var, uri, args, cb ) {
+                // if args is not an array it's the callback function
+                if( Object.prototype.toString.call( args ) !== '[object Array]' ) {
+                    cb = args;
+                }
+
+
+            };
+
+            Server.callInto( Server.userModels, 'Controller/Samples->getUserByName', ['Marlon'], function( $return ) {
+                console.log( Server.userModels )
+            } );
+        </script>
     </body>
 </html>
