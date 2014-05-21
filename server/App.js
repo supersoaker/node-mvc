@@ -12,14 +12,17 @@ var io          = require('socket.io').listen(8081),
 		database : 'node-mvc'
 	}
 
-    Controllers = []
+    Controller = {}
 
 ;
+
+//require all controllers
 require("fs").readdirSync("./App/Controller").forEach(function(file) {
-    Controllers.push( require("./App/Controller/" + file) );
+    var ctrl = require("./App/Controller/" + file);
+    Controller[ ctrl.name ] = ctrl;
 });
 
-console.log( Controllers[0] )
+console.log( Controller )
 function initServer() {
 
 	emitter.on('db-connected', onServerReady);
@@ -255,5 +258,48 @@ function onServerReady() {
 //
 //
 //	} );
+
+
+
+}
+
+/*
+
+ Server.callInto( Server.userModels, 'Controller/Samples->getUserByName', ['Marlon'], function( $return ) {
+ console.log( Server.userModels )
+ } );
+
+*/
+onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon'], function( $return ) {
+    console.log( $return )
+} )
+function onAjaxRequest( localVariable, method, args, cb ) {
+    var split = method.split( '/' );
+    if( split.length === 2 ){
+        var module = split[0];
+        split = split[1].split('->');
+        if( split.length === 2 ){
+            var moduleName = split[0];
+            var method = split[1];
+            var moduleInstance = global[ module ][ moduleName ];
+            if( moduleInstance ){
+                var moduleInstanceMethod = moduleInstance[ method ];
+                if( moduleInstanceMethod ){
+                    if( Array.isArray( args ) ){
+                        var $return =
+                            moduleInstanceMethod( moduleInstance, args );
+                        console.log( $return )
+                        if( $return.then ){
+                            $return.then(function($return){
+                                console.log( 655);
+
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 }
