@@ -4,40 +4,59 @@
     }
 </stlye>
 <script>
-    var dataAttributes = [
-        'innerHTML',
-        'hidden',
-        'value'
-    ];
+    var blub = "11.5.2013"
+    function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
+    r(function(){
 
-    // todo: attributes elemente raussuchen, und die werte der html elemente ändern, die angegeben sind
-    var i = dataAttributes.length;
-    while(i--){
-        document.getElementsByTagName( 'data-'+ dataAttributes[i] );
-    }
+
+        var dataAttributes = [
+            'innerHTML',
+            'hidden',
+            'value'
+//            'show-attribute',
+//            'dependencies'
+        ];
+        userTickets = [1, 2, 3, 4];
+        // todo: attributes elemente raussuchen, und die werte der html elemente ändern, die angegeben sind
+        var i = dataAttributes.length;
+        while(i--){
+//            console.log( "=========" )
+            var elems = document.querySelector( '[data-'+ dataAttributes[i] +']' );
+//            console.log( 'elems', elems )
+            var variable = elems.getAttribute( 'data-'+ dataAttributes[i] );
+//            console.log( 'variable', variable )
+            var value = new Function( 'return '+ variable )();
+//            console.log( "value", value )
+            // todo:
+            if( dataAttributes[i] === "showAttribute" ){ }
+            elems[ dataAttributes[i] ] = value;
+        }
+    });
 //    var
 </script>
 <div class="alert alert-success">
     <!--<strong data-showVars="[userModel.fullname, userModel.messagesCounted]">-->
-    <strong data-dependencies="[userModel.fullname, userModel.messagesCounted]">
-        Willkommen {%1}, du hast {%2} Nachrichten
+    <strong data-dependencies="{window: 'win', location: 'loc'}">
+        Willkommen {%1}, du hast {loc} Nachrichten
     </strong>
     <br />
-    <input data-value="" type="text"/>
-    Letzter Login: <var data-innerHTML="userModel.lastLogin"></var>
+    <input data-value="location.href" type="text"/>
+
+    Letzter Login: <var data-innerHTML="blub"></var>
+    <!--Letzter Login: <var data-innerHTML="userModel.lastLogin"></var>-->
 </div>
 
 <div class="panel panel-danger">
     <div class="panel-heading"><h4><strong>Tickets</strong></h4></div>
     <div class="panel-body">
 
-        <div data-hidden="userTickets.length == 1">
+        <div data-hidden="userTickets.length == 4">
             Sie haben <a href="tickets/viewtickets/my">1 Ticket</a>, das noch bearbeitet werden muss.
         </div>
-        <div data-display-if="userTickets.length > 2" data-showVars="[userTickets.length]">
+        <div data-hidden="userTickets.length > 2" data-showVars="[userTickets.length]">
             Sie haben <a href="tickets/viewtickets/my">{$1} Tickets</a>, das noch bearbeitet werden muss.
         </div>
-        <div data-display-if="userTickets.length ==  0">
+        <div data-hidden="userTickets.length ==  0">
             Sie haben keine zugewiesenen Tickets.
         </div>
 
