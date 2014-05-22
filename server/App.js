@@ -10,19 +10,21 @@ var io          = require('socket.io').listen(8081),
 	db          = {},
 	config      = {
 		database : 'node-mvc'
-	}
-
-    Controller = {}
+    },
+    Modules     = {
+        Controller: {}
+    }
 
 ;
 
 //require all controllers
 require("fs").readdirSync("./App/Controller").forEach(function(file) {
     var ctrl = require("./App/Controller/" + file);
-    Controller[ ctrl.name ] = ctrl;
+    if( ctrl.init )
+        ctrl.init();
+    Modules.Controller[ ctrl.name ] = ctrl;
 });
 
-console.log( Controller )
 function initServer() {
 
 	emitter.on('db-connected', onServerReady);
@@ -41,7 +43,6 @@ function initServer() {
 }
 initServer();
 
-var App = {};
 (function() {
 
 	var Database = {
@@ -55,7 +56,42 @@ var App = {};
 
 	App = {
 
+        exchangeDependencies: function( func, args, callback ) {
+            // get the specific callback dependence
+            if( typeof callback === "undefined" )
+                callback = function() {};
 
+            // get the arguments/dependencies that the method need
+            var deps = func
+                .toString()
+                .match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
+                .replace(/ /g, '')
+                .split(',');
+
+            // set the available dependencies
+            var availableDeps = {
+                $callback : callback,
+                $App      : App
+            };
+
+            // iterate the arguments and set the dependencies if needed
+            var i = 0;
+            while( i < deps.length ){
+                // if inject dependencies
+                if( typeof availableDeps[ deps[i] ] !== "undefined" ){
+                    args.splice(i, 0, availableDeps[ deps[i] ]);
+                } else
+                // if the argument is not defined set it undefined
+                if( i+1 > args.length ) {
+                    args[i] = undefined;
+                }
+                i++;
+            }
+
+            return args;
+        },
+
+        // todo: auslagern evtl in db
 		addNewModel : function( modelName, construct ) {
 
 			var constructInstance = {};
@@ -225,27 +261,27 @@ function onServerReady() {
     var ArticleCollection = '';
 
 	// each model has its own table
-	var Article = App.addNewModel( 'article', {
-        id              : 1,
-		itemId			: 1,
-		galleryUrl 		: "http://google.de",
-		title			: "Default",
-		itemUrl 		: "http://google.de"
-	} );
-
-
-    var art3 = new Article( {
-		id             : 3,
-//		itemId			: 1256666,
-//		galleryUrl 		: "http://ysdfsdfsdf.com",
-//		title			: "das",
-		itemUrl         : "http://sdfsd.de"
-	} );
+//	var Article = App.addNewModel( 'article', {
+//        id              : 1,
+//		itemId			: 1,
+//		galleryUrl 		: "http://google.de",
+//		title			: "Default",
+//		itemUrl 		: "http://google.de"
+//	} );
+//
+//
+//    var art3 = new Article( {
+//		id             : 3,
+////		itemId			: 1256666,
+////		galleryUrl 		: "http://ysdfsdfsdf.com",
+////		title			: "das",
+//		itemUrl         : "http://sdfsd.de"
+//	} );
 
 
 //	var arr = [art1, art2, art3]
 //    var b = App.getModelTable("article")
-	console.log( art3.get('asggsdgs') )
+//	console.log( art3.get('asggsdgs') )
 //    console.log(b)
 //        .remove({}, function(){ console.log(arguments)});
 //    App.saveModels( arr, function( modelSavedArray ) {
@@ -270,36 +306,56 @@ function onServerReady() {
  } );
 
 */
-onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon'], function( $return ) {
+onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
     console.log( $return )
 } )
-function onAjaxRequest( localVariable, method, args, cb ) {
-    var split = method.split( '/' );
-    if( split.length === 2 ){
-        var module = split[0];
-        split = split[1].split('->');
-        if( split.length === 2 ){
-            var moduleName = split[0];
-            var method = split[1];
-            var moduleInstance = global[ module ][ moduleName ];
-            if( moduleInstance ){
-                var moduleInstanceMethod = moduleInstance[ method ];
-                if( moduleInstanceMethod ){
-                    if( Array.isArray( args ) ){
-                        var $return =
-                            moduleInstanceMethod( moduleInstance, args );
-                        console.log( $return )
-                        if( $return.then ){
-                            $return.then(function($return){
-                                console.log( 655);
+function onAjaxRequest( localVariable, action, args, cb ) {
 
-                            });
-                        }
-                    }
-                }
-            }
-        }
+    // setting variables and check if action exists
+    var split = action.split( '/' );
+    if( split.length !== 2 )
+        return;
+
+    var module = split[0];
+    split = split[1].split('->');
+    if( split.length !== 2 )
+        return;
+
+
+    var moduleCollection  = Modules[ module ];
+    if( !moduleCollection )
+        return;
+
+    var moduleName      = split[0],
+        moduleInstance = moduleCollection[ moduleName ];
+    if( typeof moduleInstance === "undefined" )
+        return;
+
+    var method               = split[1],
+        moduleInstanceMethod = moduleInstance[ method ];
+    // todo: keine _method auswählbar
+    if( typeof moduleInstanceMethod === "undefined" )
+        return;
+
+    if( !Array.isArray( args ) )
+        return;
+    // setting variables and check if action exists --END
+
+
+
+
+    // function to emit the $return back to the frontend
+    function emitIntoFrontend( $return ){
+        console.log( ' frontend gets: ', $return );
     }
 
+    args = App.exchangeDependencies( moduleInstanceMethod, args, emitIntoFrontend );
 
+    var $return = moduleInstanceMethod.apply( moduleInstance, args );
+    // if the method is not asynchronous, call the emit function
+    if( typeof $return !== "undefined" ){
+        emitIntoFrontend( $return );
+    }
+    // else: function uses async $callback
 }
+
