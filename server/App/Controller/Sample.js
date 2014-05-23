@@ -1,25 +1,35 @@
 var Controller = require("./../Controller");
-var App = require('./../../App');
-var Promise = require('q')
 
-    module.exports = new Controller( {
+module.exports = new Controller( {
 
     name: "Sample",
-    getUserByName: function( name ) {
-        return new Promise(function(resolve, reject) {
 
-//            App.getModelTable('users').find({}, function(err, models) {
-//                if( err ){ reject( err ); }
-//                resolve( models );
-//            });
-            setTimeout( function() {
-                resolve({
-                    hans: {
-                        alter: 12,
-                        groesse: 180
-                    }
-                });
-            }, 5000)
-        });
+    init: function() {},
+
+    getUserByName: function( name, fullname, $App, $callback ) {
+
+        // examples: async functions which uses the $callback dependence
+        setTimeout( function() {
+            $callback({
+                hans: {
+                    alter: 12,
+                    groesse: 180
+                }
+            });
+        }, 5000);
+//
+//        $App.getModelTable('users').find({ name: name }, function(err, models) {
+//            if( err ) console.error( err );
+//            $callback( models );
+//        });
+
+
+
+        // example: normal return function
+//        return {
+//            hans: {
+//                alter: 14
+//            }
+//        }
     }
 } );
