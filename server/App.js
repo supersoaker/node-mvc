@@ -13,32 +13,19 @@ var mongoose    = require('mongoose'),
 		database : 'node-mvc'
     },
     App         = {},
-    Modules     = {
+    Components  = {
         Controller: {}
     }
 
 ;
-__extends = function (child, parent) {
-    for (var key in parent) {
-        if (parent.hasOwnProperty(key)) child[key] = parent[key];
-    }
-
-    function ctor() {
-        this.constructor = child;
-    }
-    ctor.prototype = parent.prototype;
-    child.prototype = new ctor();
-    child.__super__ = parent.prototype;
-    return child;
-};
-
 
 //require all controllers
 require("fs").readdirSync("./App/Controller").forEach(function(file) {
     var ctrl = require("./App/Controller/" + file);
+    console.log( file );
     if( ctrl.init )
         ctrl.init();
-    Modules.Controller[ ctrl.name ] = ctrl;
+    Components.Controller[ ctrl.name ] = ctrl;
 });
 
 function initServer() {
@@ -72,51 +59,25 @@ initServer();
 	App = {
         init : function() {
 
-            this.Injector.dependencies.$App = this;
+//            this.Injector.dependencies.$App = this;
         },
-        Injector : {
-            // the available dependencies
-            dependencies : {
-                $callback : function() {},
-                $App      : {}
-            },
-            // function for applying function with exchanged arguments
-            resolve : function( func, args, scope  ) {
-                if( typeof scope === "undefined" )
-                    scope = func;
-                args = this.exchangeArguments( func, args );
-                func.apply( scope, args );
-            },
-            // function to exchange arguments/dependencies
-            exchangeArguments : function( func, args ) {
-                var deps = this.getArguments( func );
-                // iterate the arguments and set the dependencies if needed
-                var i = 0;
-                while( i < deps.length ){
-                    // if inject dependencies
-                    if( typeof this.dependencies[ deps[i] ] !== "undefined" ){
-                        args.splice(i, 0, this.dependencies[ deps[i] ]);
-                    } else
-                    // if the argument is not defined set it undefined
-                    if( i+1 > args.length ) {
-                        args[i] = undefined;
-                    }
-                    i++;
-                }
-                return args;
-            },
-            // get the arguments from the function
-            getArguments : function( func ) {
-                // get the arguments/dependencies that the method need
-                return func
-                    .toString()
-                    .match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1]
-                    .replace(/ |\r\n|\/\/|\/*...*\//g, '')
-                    .split(',');
+
+        __extendClass : function (child, parent) {
+            for (var key in parent) {
+                if (parent.hasOwnProperty(key)) child[key] = parent[key];
             }
+
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor();
+            child.__super__ = parent.prototype;
+            return child;
         }
 
-	};
+
+    };
     App.init();
 })();
 
@@ -169,56 +130,7 @@ function onServerReady() {
  } );
 
 */
-onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
-    console.log( $return )
-} );
-function onAjaxRequest( localVariable, action, args, cb ) {
-
-    // setting variables and check if action exists
-    var split = action.split( '/' );
-    if( split.length !== 2 )
-        return;
-
-    var module = split[0];
-    split = split[1].split('->');
-    if( split.length !== 2 )
-        return;
-
-    var moduleCollection  = Modules[ module ];
-    if( !moduleCollection )
-        return;
-
-    var moduleName      = split[0],
-        moduleInstance = moduleCollection[ moduleName ];
-    if( typeof moduleInstance === "undefined" )
-        return;
-
-    var method               = split[1],
-        moduleInstanceMethod = moduleInstance[ method ];
-    if( typeof method.indexOf('_') == 0 )
-        return;
-    if( typeof moduleInstanceMethod === "undefined" )
-        return;
-    // native v8 method
-    if( !Array.isArray( args ) )
-        return;
-    // setting variables and check if action exists --END
-
-
-
-
-    // function to emit the $return back to the frontend
-    function emitIntoFrontend( $return ){
-        console.log( ' frontend gets: ', $return );
-    }
-
-    App.Injector.dependencies.$callback = emitIntoFrontend;
-    App.Injector.resolve( moduleInstanceMethod, args, moduleInstance );
-
-    // if the method is not asynchronous, call the emit function
-    if( typeof $return !== "undefined" ){
-        emitIntoFrontend( $return );
-    }
-    // else: function uses async $callback
-}
-
+Socket.
+    onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
+        console.log( $return )
+    } );

@@ -53,11 +53,14 @@
                 }
 
 
+
             };
             // Server.activateBinding
             Server.callInto( Server.userModels, 'Controller/Samples->getUserByName', ['Marlon'], function( $return ) {
+//            Server.callInto( Server.userModels, 'Module/Samples->getUserByName', ['Marlon'], function( $return ) {
                 console.log( Server.userModels )
             } );
+
         </script>
     </body>
 </html>

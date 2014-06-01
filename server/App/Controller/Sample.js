@@ -6,7 +6,7 @@ module.exports = new Controller( {
 
     init: function() {},
 
-    getUserByName: function( name, fullname, $App, $callback ) {
+    $$getUserByName: function( name, fullname, $App, $callback ) {
 
         // examples: async functions which uses the $callback dependence
         setTimeout( function() {
