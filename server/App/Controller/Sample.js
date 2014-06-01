@@ -2,8 +2,11 @@ var Controller = require("./../Controller");
 
 module.exports = new Controller( {
 
-    name: "Sample",
-
+//    name: "Sample",
+    // todo: adding router module / request module
+    getRoutes: {
+        'management/': this.$$getUserByName
+    },
     init: function() {},
 
     $$getUserByName: function( name, fullname, $App, $callback ) {

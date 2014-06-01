@@ -1,10 +1,11 @@
 var mongoose    = require('mongoose'),
 	events      = require('events'),
+    async       = require('async'),
 
 	// custom modules
-	Model       = require('./App/Model'),
-	Database    = require('./App/Database'),
-	Socket      = require('./App/Socket'),
+//	Model       = require('./App/Model'),
+//	Database    = require('./App/Database'),
+//	Socket      = require('./App/Socket'),
 
 	// global variables
 	emitter     = new events.EventEmitter(),
@@ -22,44 +23,49 @@ var mongoose    = require('mongoose'),
 //require all controllers
 require("fs").readdirSync("./App/Controller").forEach(function(file) {
     var ctrl = require("./App/Controller/" + file);
-    console.log( file );
+    var ctrlName = file.substring( 0, file.length - 4 );
     if( ctrl.init )
         ctrl.init();
-    Components.Controller[ ctrl.name ] = ctrl;
+    Components.Controller[ ctrl.name || ctrlName ] = ctrl;
 });
 
 function initServer() {
 
 	emitter.on('db-connected', onServerReady);
 
-	mongoose.connect('mongodb://localhost/'+ config.database);
-	db = mongoose.connection;
-	db.on('error', console.error.bind(console, 'connection error:'));
-	db.once('open', function() {  emitter.emit('db-connected');  });
 
-    Socket.init();
+//    Socket.init();
 }
 
 initServer();
 
 (function() {
 
-	var Database = {
-		// object with all tables
-		table: {}
-	};
-
-    function capitalizeString(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-
-
-
 	App = {
-        init : function() {
+        init : function(  ) {
 
-//            this.Injector.dependencies.$App = this;
+            for (var component in Components) {
+                Components.Injector.addDependency(
+                    component,
+                    Components[ component ]
+                );
+            }
+            console.time('without async')
+            var arr = [];
+            for ( var obj in Components ) {
+                var initFunc = Components[ obj ].init;
+                if( initFunc ) {
+                    arr.push(function( ){
+                        Components.Injector.call( initFunc );
+                    })
+                }
+            }
+
+            async.parallel( arr, function() {
+
+                console.timeEnd('without async')
+                Components.Injector.addDependency( 'App', this );
+            } )
         },
 
         __extendClass : function (child, parent) {
@@ -76,8 +82,16 @@ initServer();
             return child;
         }
 
-
     };
+
+    Components.Config       = config;
+    Components.Controller   = require("./App/Controller");
+    Components.Injector     = require("./App/Injector");
+    Components.Socket       = require("./App/Socket");
+    Components.Module       = require("./App/Module");
+    Components.Model        = require("./App/Model");
+    Components.Database     = require("./App/Database");
+
     App.init();
 })();
 
@@ -130,7 +144,8 @@ function onServerReady() {
  } );
 
 */
-Socket.
+console.log( Components.Socket )
+Components.Socket.
     onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
         console.log( $return )
     } );

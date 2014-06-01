@@ -1,16 +1,17 @@
-var io          = require('socket.io').listen(8081),
-    Socket      = module.exports = {
+var io              = require('socket.io').listen(8081),
+    publicFuncMark  = '$$',
+    Socket          = module.exports = {
 
-        components : {},
+        init : function(  ) {
 
-        init : function( $components ) {
-
-            this.components = $components;
+//            this.components = $components;
+//            this.components = {};
             io.set('log level', 1); // reduce logging
             io.sockets.on('connection', function (socket) {
                 console.log( "connection" )
             });
         },
+        components: {},
 
         onAjaxRequest: function( localVariable, action, args, cb ) {
 
@@ -33,7 +34,7 @@ var io          = require('socket.io').listen(8081),
             if( typeof moduleInstance === "undefined" )
                 return;
 
-            var method               = "$$" + split[1],
+            var method               = publicFuncMark + split[1],
                 moduleInstanceMethod = moduleInstance[ method ];
             if( typeof moduleInstanceMethod === "undefined" )
                 return;
@@ -50,8 +51,8 @@ var io          = require('socket.io').listen(8081),
                 console.log( ' frontend gets: ', $return );
             }
 
-            this.components.dependencies.$callback = emitIntoFrontend;
-            this.components.Injector.resolve( moduleInstanceMethod, args, moduleInstance );
+//            this.components.dependencies.$callback = emitIntoFrontend;
+//            this.components.Injector.resolve( moduleInstanceMethod, args, moduleInstance );
 
             // if the method is not asynchronous, call the emit function
             if( typeof $return !== "undefined" ){

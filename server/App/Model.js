@@ -1,3 +1,7 @@
+function capitalizeString(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 var Model = {
 
     addNew : function( modelName, construct ) {
