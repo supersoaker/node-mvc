@@ -18,22 +18,36 @@ App.Model = (function() {
     return function( modelName, prototype ) {
 	    prototype = typeof prototype !== "undefined" ? prototype :
 	    	{};
-        var elem        = document.querySelector( '[data-model-view="'+ modelName +'"]' );
-        var template    = (modelTemplates[ modelName ] = modelTemplates[ modelName ] || elem.innerHTML);
+        var template    = "";
+        var elem;
+
+        if( modelTemplates[ modelName ] ){
+            template        = modelTemplates[ modelName ];
+
+//            var wrapper = document.createElement('div');
+//            wrapper.innerHTML   = template;
+//            wrapper.appendChild( template.cloneNode(true) );
+//            elem = wrapper.firstChild;
+//            var div         = document.createElement('div');
+//            elem            = div.firstChild;
+//            elem.outerHTML = template;
+        } else {
+            elem            = document.querySelector( '[data-model-view="'+ modelName +'"]' );
+            template        = elem.outerHTML;
+            modelTemplates[ modelName ] = template;
+        }
         var currentHtml = "";
         var newHtml     = template;
         var variable    = "";
         var model       = prototype;
 		var key         = "";
 
-		var watchesOn       = prototype.watchesOn || this.watchesOn;
+		var watchesOn   = prototype.watchesOn || this.watchesOn;
 	    var privates    = {
 	        viewElem    : elem,
 		    viewTemplate: template,
 		    watchers    : watchesOn
 	    };
-
-//        this.viewElem   = elem;
 
 	    /**
 	     * Get method for private properties
@@ -49,7 +63,7 @@ App.Model = (function() {
 				return privates[ prop ];
 
 		    $default = typeof $default !== "undefined" ? $default :
-		    	false;
+		    	privates;
 		    return $default;
 	    };
 
@@ -61,9 +75,10 @@ App.Model = (function() {
             return newVal;
         }
 
-	    if( watchesOn > 0 ){
+
+	    if( watchesOn.length > 0 ){
 		    for( key in watchesOn ) {
-			    addPropWatcher( model, key, updatePropInView );
+			    addPropWatcher( model, watchesOn[ key ], updatePropInView );
 		    }
 	    } else {
 	        for( key in this ) {
@@ -85,10 +100,14 @@ App.Model = (function() {
                 }
             }
             if( newHtml !== currentHtml ) {
-                elem.innerHTML = newHtml;
+                // todo: node / htmlElemente anpassen
+                var wrapper= document.createElement('div');
+                wrapper.innerHTML= newHtml;
+                console.log( wrapper.firstChild )
+                elem = wrapper.firstChild;
             }
             currentHtml = newHtml;
-            newHtml = template;
+            newHtml     = template;
         }
         updatePropsInView();
 
@@ -109,7 +128,7 @@ App.Model.prototype = {
 
 // todo: App.addModel
 //App.addModel
-
+/*
 var blub  = new App.Model( "testModel", {
 	watchesOn: [],
 	options: 12,
@@ -130,4 +149,4 @@ function startTest() {
         blub.options = i;
     }
     console.timeEnd('updatePropInView')
-}
+}*/

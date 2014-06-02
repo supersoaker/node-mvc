@@ -7,10 +7,9 @@ module.exports = Injector = {
 
     // the available dependencies
     dependencies : {
-//        $callback : function() {},
+        $callback : function() {}
 //        $App      : {}
     },
-
     addDependency: function( depName, dependency ) {
         this.dependencies[ preDependence + depName ] = dependency;
     },
