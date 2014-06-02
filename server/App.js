@@ -13,13 +13,19 @@ var io          = require('socket.io').listen(8081),
     },
     Modules     = {
         Controller: {}
-    }
+    },
+	App         = {}
 
 ;
 
 //require all controllers
 require("fs").readdirSync("./App/Controller").forEach(function(file) {
     var ctrl = require("./App/Controller/" + file);
+	var ctrlName = ctrl.name;
+	if( !ctrlName ) {
+		ctrlName = file.replace('.js', '');
+	}
+	console.log( ctrlName )
     if( ctrl.init )
         ctrl.init();
     Modules.Controller[ ctrl.name ] = ctrl;

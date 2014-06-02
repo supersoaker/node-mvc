@@ -15,7 +15,7 @@ function Controller( newController ) {
 }
 
 Controller.prototype = {
-    name: "Default"
+//    name: "Default"
 };
 
 module.exports = Controller;

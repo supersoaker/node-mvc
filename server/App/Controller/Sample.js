@@ -2,7 +2,7 @@ var Controller = require("./../Controller");
 
 module.exports = new Controller( {
 
-    name: "Sample",
+//    name: "Sample",
 
     init: function() {},
 
