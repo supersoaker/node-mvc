@@ -37,6 +37,7 @@ App.Model = (function() {
                 modelElems[ modelName ].removeChild( modelElems[ modelName ].children[0] );
             }
         }
+
         var currentHtml = "";
         var newHtml     = template;
         var variable    = "";
@@ -49,7 +50,17 @@ App.Model = (function() {
 		    watchers    : watchesOn
 	    };
 
-	    /**
+        if( watchesOn.length > 0 ){
+            for( key in watchesOn ) {
+                addPropWatcher( model, watchesOn[ key ], updatePropInView );
+            }
+        } else {
+            for( key in prototype ) {
+                addPropWatcher( model, key, updatePropInView );
+            }
+        }
+
+        /**
 	     * Get method for private properties
 	     * @param prop
 	     * @param $default
@@ -75,17 +86,6 @@ App.Model = (function() {
             return newVal;
         }
 
-
-	    if( watchesOn.length > 0 ){
-		    for( key in watchesOn ) {
-			    addPropWatcher( model, watchesOn[ key ], updatePropInView );
-		    }
-	    } else {
-	        for( key in this ) {
-	            addPropWatcher( model, key, updatePropInView );
-	        }
-	    }
-
         function updatePropsInView( prop, newVal ) {
 	        var reg = /\{\{(.*?)\}\}/g;
 	        var re = "";
@@ -99,6 +99,7 @@ App.Model = (function() {
                     }
                 }
             }
+            console.log( newHtml )
             if( newHtml !== currentHtml ) {
                 elem.innerHTML = newHtml;
             }
