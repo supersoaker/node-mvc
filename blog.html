@@ -13,8 +13,8 @@
         width: 600px;
         margin: 50px auto 0;
     ">
-        <div id="beitrag-wrapper" class="panel-body">
-            <div class="panel blog-beitrag panel-primary" data-model-view="beitrag" >
+        <div id="post-wrapper" class="panel-body">
+            <div class="panel blog-beitrag panel-primary" data-model-view="post" >
                 <div class="panel-heading">
                     {{ head }}
                 </div>
@@ -51,24 +51,21 @@
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
     <script>
-        $( document).ready(function() {
+        $(document).ready(function() {
 
-            var blub = new App.Model( "beitrag", {
+            var blub = new App.Model( "post", {
                 head: 'title',
                 content: 'hallo welt'
             } );
 
             $('button').click( function () {
-                var newBeitrag = new App.Model( "beitrag", {
+                var newPost = new App.Model( "post", {
                     head    : $('input')[0].value,
                     content : $('input')[1].value
                 } );
-                var viewElem = newBeitrag.get('viewElem');
-//                b =  newBeitrag
-//                console.log(viewElem)
                 document
-                    .getElementById('beitrag-wrapper')
-                    .appendChild( viewElem )
+                    .getElementById('post-wrapper')
+                    .appendChild( newPost.get('viewElem') );
             });
         });
     </script>
