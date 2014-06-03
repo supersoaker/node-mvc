@@ -15,6 +15,7 @@ function trim ( str ) {
 
 App.Model = (function() {
     var modelTemplates = {};
+    var modelElems = {};
     return function( modelName, prototype ) {
 	    prototype = typeof prototype !== "undefined" ? prototype :
 	    	{};
@@ -23,25 +24,24 @@ App.Model = (function() {
 
         if( modelTemplates[ modelName ] ){
             template        = modelTemplates[ modelName ];
-
-//            var wrapper = document.createElement('div');
-//            wrapper.innerHTML   = template;
-//            wrapper.appendChild( template.cloneNode(true) );
-//            elem = wrapper.firstChild;
-//            var div         = document.createElement('div');
-//            elem            = div.firstChild;
-//            elem.outerHTML = template;
+            // setting the new element as a clone of the structure Element
+            elem            = modelElems[ modelName ].cloneNode(true);
         } else {
-            elem            = document.querySelector( '[data-model-view="'+ modelName +'"]' );
-            template        = elem.outerHTML;
+            elem                        = document.querySelector( '[data-model-view="'+ modelName +'"]' );
+            template                    = elem.innerHTML;
             modelTemplates[ modelName ] = template;
+            modelElems[ modelName ]     = elem;
+
+            // remove the children, because the innerHtml is set through the template
+            while ( modelElems[ modelName ].children.length ) {
+                modelElems[ modelName ].removeChild( modelElems[ modelName ].children[0] );
+            }
         }
         var currentHtml = "";
         var newHtml     = template;
         var variable    = "";
         var model       = prototype;
 		var key         = "";
-
 		var watchesOn   = prototype.watchesOn || this.watchesOn;
 	    var privates    = {
 	        viewElem    : elem,
@@ -100,11 +100,7 @@ App.Model = (function() {
                 }
             }
             if( newHtml !== currentHtml ) {
-                // todo: node / htmlElemente anpassen
-                var wrapper= document.createElement('div');
-                wrapper.innerHTML= newHtml;
-                console.log( wrapper.firstChild )
-                elem = wrapper.firstChild;
+                elem.innerHTML = newHtml;
             }
             currentHtml = newHtml;
             newHtml     = template;

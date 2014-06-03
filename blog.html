@@ -51,31 +51,24 @@
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
     <script>
-        var b;
         $( document).ready(function() {
-//            var first = new
-            blub = new App.Model( "beitrag", {
+
+            var blub = new App.Model( "beitrag", {
                 head: 'title',
                 content: 'hallo welt'
             } );
-            b = []
+
             $('button').click( function () {
                 var newBeitrag = new App.Model( "beitrag", {
                     head    : $('input')[0].value,
                     content : $('input')[1].value
                 } );
                 var viewElem = newBeitrag.get('viewElem');
-//                a = document
-//                        .getElementById('beitrag-wrapper')
-<!---->
-//                b = document.getElementsByTagName('button')[0]
-//                c = viewElem
+
                 console.log(viewElem)
                 document
-                        .getElementById('beitrag-wrapper')
-                        .appendChild( viewElem )
-//                $('#beitrag-wrapper>.panel-body').append( viewElem.innerHTML );
-//                b.push( newBeitrag )
+                    .getElementById('beitrag-wrapper')
+                    .appendChild( viewElem )
             });
         });
     </script>
