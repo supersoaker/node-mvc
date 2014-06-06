@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title> blog beiträge models</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+</head>
+<body>
+
+    <div class="panel panel-default" style="
+        width: 600px;
+        margin: 50px auto 0;
+    ">
+        <div id="post-wrapper" class="panel-body">
+            <div class="panel blog-beitrag panel-primary" data-model-view="post" >
+                <div class="panel-heading">
+                    {{ head }}
+                </div>
+                <div class="panel-body">
+                    {{ content }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="form-wrapper" style="
+        width: 600px;
+        margin: 10px auto 0;
+    ">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <label style="width: 300px">
+                    Titel :
+                    <input style="float: right" type="text"/>
+                </label>
+                <br/>
+                <label style="width: 300px">
+                    Inhalt :
+                    <input style="float: right" type="text" height="50"/>
+                </label>
+                <br/>
+                <button> Add </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            var blub = new App.Model( "post", {
+                head: 'title',
+                content: 'hallo welt'
+            } );
+
+            $('button').click( function () {
+                var newPost = new App.Model( "post", {
+                    head    : $('input')[0].value,
+                    content : $('input')[1].value
+                } );
+                document
+                    .getElementById('post-wrapper')
+                    .appendChild( newPost.get('viewElem') );
+            });
+        });
+    </script>
+</body>
+</html>
