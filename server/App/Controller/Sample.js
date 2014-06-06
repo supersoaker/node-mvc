@@ -3,10 +3,13 @@ var Controller = require("./../Controller");
 module.exports = new Controller( {
 
 //    name: "Sample",
-
+    // todo: adding router module / request module
+    getRoutes: {
+        'management/': this.$$getUserByName
+    },
     init: function() {},
 
-    getUserByName: function( name, fullname, $App, $callback ) {
+    $$getUserByName: function( name, fullname, $App, $callback ) {
 
         // examples: async functions which uses the $callback dependence
         setTimeout( function() {
@@ -17,7 +20,7 @@ module.exports = new Controller( {
                 }
             });
         }, 5000);
-//
+
 //        $App.getModelTable('users').find({ name: name }, function(err, models) {
 //            if( err ) console.error( err );
 //            $callback( models );
