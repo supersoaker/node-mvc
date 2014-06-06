@@ -18,9 +18,7 @@ $(document).ready(function() {
             head    : $('input')[0].value,
             content : $('input')[1].value
         } );
-        document
-            .getElementById('post-wrapper')
-            .appendChild( newPost.get('viewElem') );
+        $('#post-wrapper').append( newPost.get('viewElem') );
     });
 });
 ```
