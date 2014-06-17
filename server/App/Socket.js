@@ -1,13 +1,12 @@
-var io              = require('socket.io').listen(8081),
-    publicFuncMark  = '$$',
+var publicFuncMark  = '$$',
     Socket          = module.exports = {
 
-        init : function(  ) {
+        init : function( $Server ) {
+            console.log( "socket")
+            var io = require('socket.io')( $Server );
 
-//            this.components = $components;
-//            this.components = {};
-            io.set('log level', 1); // reduce logging
-            io.sockets.on('connection', function (socket) {
+            io.on('connection', function (socket) {
+//                console.log( socket )
                 console.log( "connection" )
             });
         },

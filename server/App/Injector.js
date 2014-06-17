@@ -8,15 +8,14 @@ module.exports = Injector = {
     // the available dependencies
     dependencies : {
         $callback : function() {}
-//        $App      : {}
     },
     addDependency: function( depName, dependency ) {
         this.dependencies[ preDependence + depName ] = dependency;
     },
     // the initialisation function
-    init : function( $Config, $Socket ) {
+    init : function( $Config ) {
         // $socket is not initialized
-        console.log( $Config )
+//        console.log( $Config )
     },
     // function for applying function with exchanged arguments
     resolve : function( func, args, scope  ) {

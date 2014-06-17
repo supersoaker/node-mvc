@@ -1,6 +1,6 @@
 var mongoose    = require('mongoose'),
 	events      = require('events'),
-    async       = require('async'),
+//    async       = require('async'),
 
 	// custom modules
 //	Model       = require('./App/Model'),
@@ -31,7 +31,7 @@ require("fs").readdirSync("./App/Controller").forEach(function(file) {
 
 function initServer() {
 
-	emitter.on('db-connected', onServerReady);
+//	emitter.on('db-connected', onServerReady);
 
 
 //    Socket.init();
@@ -41,8 +41,17 @@ initServer();
 
 (function() {
 
+
+    var http = require('http');
+
+    var server = http.createServer(function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('Hello World\n');
+    }).listen(1337, '127.0.0.1');
+
+
 	App = {
-        init : function(  ) {
+        init : function() {
 
             for (var component in Components) {
                 Components.Injector.addDependency(
@@ -50,22 +59,14 @@ initServer();
                     Components[ component ]
                 );
             }
-            console.time('without async')
-            var arr = [];
+
             for ( var obj in Components ) {
                 var initFunc = Components[ obj ].init;
                 if( initFunc ) {
-                    arr.push(function( ){
-                        Components.Injector.call( initFunc );
-                    })
+                    Components.Injector.call( initFunc );
                 }
             }
 
-            async.parallel( arr, function() {
-
-                console.timeEnd('without async')
-                Components.Injector.addDependency( 'App', this );
-            } )
         },
 
         __extendClass : function (child, parent) {
@@ -84,6 +85,7 @@ initServer();
 
     };
 
+    Components.Server       = server;
     Components.Config       = config;
     Components.Controller   = require("./App/Controller");
     Components.Injector     = require("./App/Injector");
@@ -97,7 +99,8 @@ initServer();
 
 function onServerReady() {
     var ArticleCollection = '';
-
+        console.log(123)
+    App.init()
 	// each model has its own table
 //	var Article = App.addNewModel( 'article', {
 //        id              : 1,
@@ -144,8 +147,8 @@ function onServerReady() {
  } );
 
 */
-console.log( Components.Socket )
-Components.Socket.
-    onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
-        console.log( $return )
-    } );
+//console.log( Components.Socket )
+//Components.Socket.
+//    onAjaxRequest( "", 'Controller/Sample->getUserByName', ['Marlon', "Marlon Rüscher"], function( $return ) {
+//        console.log( $return )
+//    } );

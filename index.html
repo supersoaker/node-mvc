@@ -38,10 +38,11 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <!--<script src="js/main.js"></script>-->
-        <script src="http://localhost:8081/socket.io/socket.io.js"></script>
-        <script>
-            io.connect( 'http://localhost:8081' )
 
+        <script src="https://cdn.socket.io/socket.io-1.0.4.js"></script>
+        <script>
+//            io.connect( 'http://localhost:1337' )
+            var socket = io( 'http://localhost:1337' );
         </script>
         <script>
             var Sever = {};
