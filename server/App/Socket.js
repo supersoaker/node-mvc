@@ -2,7 +2,7 @@ var publicFuncMark  = '$$',
     Socket          = module.exports = {
 
         init : function( $Server ) {
-            console.log( "socket")
+
             var io = require('socket.io')( $Server );
 
             io.on('connection', function (socket) {

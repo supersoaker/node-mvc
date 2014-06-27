@@ -14,6 +14,7 @@ var mongoose    = require('mongoose'),
 		database : 'node-mvc'
     },
     App         = {},
+	Model       = {},
     Components  = {
         Controller: {}
     }
@@ -32,12 +33,30 @@ require("fs").readdirSync("./App/Controller").forEach(function(file) {
 function initServer() {
 
 //	emitter.on('db-connected', onServerReady);
+	console.log(123)
+//	App.init()
+//
+//	var UserModel = App.Module.Model.newClass({
+//
+//	});
 
+	require("fs").readdirSync("./App/Model").forEach(function(file) {
+		var modelFunc = require("./App/Model/" + file);
+		var modelName = file.substring( 0, file.length - 3 );
+		Model[ modelName ] = modelFunc;
+	});
 
+	console.log("===== ")
+	blubPost = new Model.Post( {
+		beitragName  : "Blub Name",
+		erstelltAm   : "27.06.2014"
+	} );
+//	console.log( blubPost.get('_prototype') )
+	App.Module.Model.save( blubPost, console.log );
+	console.log("===== ")
 //    Socket.init();
 }
 
-initServer();
 
 (function() {
 
@@ -59,6 +78,7 @@ initServer();
                     Components[ component ]
                 );
             }
+	        Components.Injector.addDependency( "App", this );
 
             for ( var obj in Components ) {
                 var initFunc = Components[ obj ].init;
@@ -95,12 +115,17 @@ initServer();
     Components.Database     = require("./App/Database");
 
     App.init();
+	App.Module = Components;
+	App.Model  = {};
+
+	initServer();
+
 })();
 
 function onServerReady() {
     var ArticleCollection = '';
-        console.log(123)
-    App.init()
+
+
 	// each model has its own table
 //	var Article = App.addNewModel( 'article', {
 //        id              : 1,

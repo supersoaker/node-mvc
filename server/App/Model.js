@@ -1,11 +1,31 @@
+
+var mongoose    = require('mongoose');
+
 function capitalizeString(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
-
+/**
+ * b overwrites a
+ * @param a
+ * @param b
+ * @returns {*}
+ */
+function extend(a, b){
+	for(var key in b)
+		if(b.hasOwnProperty(key))
+			a[key] = b[key];
+	return a;
+}
+var App = {};
+var Database = {};
 var Model = {
 
-    addNew : function( modelName, construct ) {
+	init: function( $App ) {
+		App = $App;
+	},
 
+    newClass: function( modelName, construct ) {
+		Database = App.Module.Database
         var constructInstance = {};
         try {
             constructInstance = new construct();
@@ -17,52 +37,69 @@ var Model = {
         var schema      = {},
             schemaTypes = [ String, Array, Object, Number, Boolean ],
             propType;
+
         // adapt the construct to the schema model of mongoose (only root properties)
         for (var o in constructInstance) {
             // check if the property is already a native variable
-            if( schemaTypes.indexOf( constructInstance[o] ) === -1 ){
-
+	        if( schemaTypes.indexOf( constructInstance[o] ) !== -1 ){
+	            schema[o] = constructInstance[o];
                 continue;
             }
+	        // get the constructor of the variable
             propType = constructInstance[o].constructor;
-            if( schemaTypes.indexOf( propType ) === -1 ){
-                schema[o] = {};
-            } else {
-                if( propType === String ){
-                    // check if property is special schema type
-                    if( propType === "Buffer" ){
-                        constructInstance[o].constructor = Buffer;
-                    } else
-                    if( propType === "Mixed" ){
-                        constructInstance[o].constructor = mongoose.Schema.Types.Mixed;
-                    } else
-                    if( propType === "Date" ) {
-                        constructInstance[o].constructor = mongoose.Schema.Types.Date;
-                    } else
-                    if( propType === "ObjectId" ) {
-                        constructInstance[o].constructor = mongoose.Schema.Types.ObjectId;
-                    }
-                    continue;
+
+	        // checks if the constructor is a native type
+	        if( schemaTypes.indexOf( propType ) && propType !== String ) {
+		        schema[o] = propType;
+		        continue;
+	        }
+
+	        // if the constructor is not a native type and not a string
+	        // the variable is set to Mixed
+	        if( propType !== String ) {
+				propType = "Mixed";
+	        }
+            if( propType === String ){
+                // check if property is special schema type
+                if( propType === "Buffer" ){
+	                schema[o] = Buffer;
+                } else
+                if( propType === "Mixed" ){
+	                schema[o] = mongoose.Schema.Types.Mixed;
+                } else
+                if( propType === "Date" ) {
+	                schema[o] = mongoose.Schema.Types.Date;
+                } else
+                if( propType === "ObjectId" ) {
+	                schema[o] = mongoose.Schema.Types.ObjectId;
+                } else {
+	                schema[o] = String;
                 }
-                schema[o] = constructInstance[o].constructor;
             }
         }
 
         // save the model table into a local variable
-        Database.table[ modelName ] =
+	    Database.table[ modelName ] =
             mongoose.model( modelName, mongoose.Schema( schema ) );
 
         // return the constructor of the model class
         function ModelClass ( model ) {
             model = typeof model !== "undefined" ? model :
-            {};
+                {};
 
             var privates    = {
-                modelName : modelName
+                modelName : modelName,
+	            prototype : construct
             };
-            for (var key in model) {
-                this[ key ] = model[ key ];
-            }
+
+	        for( var key in construct )
+		        if( construct.hasOwnProperty(key) )
+			        this[key] = construct[key];
+
+            for ( var key in model )
+		        if( model.hasOwnProperty(key) )
+                    this[ key ] = model[ key ];
+
 
             /**
              * Set method for properties
@@ -127,8 +164,11 @@ var Model = {
             };
 
         }
-        ModelClass.prototype = construct;
-        return ModelClass;
+
+//        ModelClass.prototype = construct;
+//		extend( construct,  )
+
+	    return ModelClass;
     },
 
     getTable : function( tableName ) {
@@ -139,9 +179,12 @@ var Model = {
         }
     },
 
-    saveSingle : function( model, cb ) {
+    save : function( model, cb ) {
         var tableName =  model.get('_modelName');
-        new Database.table[ tableName ]( model ).save( function( err, savedModel ) {
+	    console.log("====================")
+
+	    console.log("====================")
+	    new Database.table[ tableName ]( model ).save( function( err, savedModel ) {
 //                emitter.emit( 'Database.new-'+ tableName, model );
 //	            this.
             cb( err, savedModel );
@@ -165,4 +208,5 @@ var Model = {
     }
 
 };
+
 module.exports = Model;
